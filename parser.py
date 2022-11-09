@@ -1,6 +1,62 @@
 from tokenizer import Tokenizer
 import json
 
+AST_MODE = "default"
+
+class DefaultFactory:
+    def Program(body):
+        return {
+            "type": "Program",
+            "body": body,
+        }
+    
+    def EmptyStatement():
+        return {"type": "EmptyStatement"}
+    
+    def BlockStatement(body):
+        return {
+            "type": "BlockStatement",
+            "body": body
+        }
+    
+    def ExpressionStatement(expression):
+        return {
+            "type": "ExpressionStatement",
+            "expression": expression
+        }
+    
+    def StringLiteral(value):
+        return {
+            "type": "StringValue",
+            "value": value
+        }
+    
+    def NumericLiteral(value):
+        return {
+            "type": "NumericLiteral",
+            "value": value
+        }
+
+class SExpressionFactory:
+    def Program(body):
+        return ["begin", body]
+    
+    def EmptyStatement():
+        return
+    
+    def BlockStatement(body):
+        return ["begin", body]
+    
+    def ExpressionStatement(expression):
+        return expression
+    
+    def StringLiteral(value):
+        return "\"{}\"".format(value)
+    
+    def NumericLiteral(value):
+        return value
+    
+factory = AST_MODE == "default" and DefaultFactory or SExpressionFactory
 class Parser:
 
     def parse(self, input: str):
@@ -15,10 +71,11 @@ class Parser:
     #   : StatementList
     #   ;
     def Program(self):
-        return {
-            "type": "Program",
-            "body": self.StatementList()
-        }
+        return factory.Program(self.StatementList())
+        # return {
+        #     "type": "Program",
+        #     "body": self.StatementList()
+        # }
 
     # StatementList
     #   : Statement
@@ -58,10 +115,7 @@ class Parser:
         self._eat("{")
         body = self._lookahead["type"] != "}" and self.StatementList("}") or [];
         self._eat("}")
-        return {
-            "type": "BlockStatement",
-            "body": body
-        }
+        return factory.BlockStatement(body)
     
     # ExpressionStatement
     #   : Expression ";"
@@ -69,10 +123,7 @@ class Parser:
     def ExpressionStatement(self):
         expression = self.Expression()
         self._eat(';')
-        return {
-            "type": "ExpressionStatement",
-            "expression": expression
-        }
+        return factory.ExpressionStatement(expression)
     
     # Expression
     #   : Literal
@@ -92,17 +143,11 @@ class Parser:
 
     def NumericLiteral(self):
         token = self._eat("NUMBER")
-        return {
-            "type": "NumericLiteral",
-            "value": float(token["value"])
-        }
+        return factory.NumericLiteral(float(token["value"]))
     
     def StringLiteral(self):
         token = self._eat("STRING")
-        return {
-            "type": "StringLiteral",
-            "value": token["value"][1:-1]
-        }
+        return factory.StringLiteral(token["value"][1:-1])
     
     def _eat(self, tokenType):
         token = self._lookahead
