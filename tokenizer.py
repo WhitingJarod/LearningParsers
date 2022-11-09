@@ -5,7 +5,8 @@ Spec = [
     [re.compile("^\'[^\']*\'"), "STRING"],
     [re.compile("^\s+"), None],
     [re.compile("^//.*\n"), None],
-    [re.compile("/\*[\s\S]*\*/"), None]
+    [re.compile("/\*[\s\S]*\*/"), None],
+    [re.compile("^;"), ";"],
 ]
 
 
@@ -26,7 +27,6 @@ class Tokenizer:
 
     def getNextToken(self):
         if not self.hasMoreTokens():
-            print("EOF")
             return None
 
         string = self._string[self._cursor:]

@@ -10,18 +10,52 @@ class Parser:
 
     
     # Main entry point.
-    #
+    # Program
+    #   : StatementList
+    #   ;
+    def Program(self):
+        return {
+            "type": "Program",
+            "body": self.StatementList()
+        }
+
+    # StatementList
+    #   : Statement
+    #   | StatementList Statement -> Statement Statement Statement Statement
+    #   ;
+    def StatementList(self):
+        statementList = [self.Statement()]
+        while self._lookahead:
+            statementList.append(self.Statement())
+        return statementList
+    
+    # Statement
+    #   : ExpressionStatement
+    #   ;
+    def Statement(self):
+        return self.ExpressionStatement()
+    
+    # ExpressionStatement
+    #   : Expression ";"
+    #   ;
+    def ExpressionStatement(self):
+        expression = self.Expression()
+        self._eat(';')
+        return {
+            "type": "ExpressionStatement",
+            "expression": expression
+        }
+    
+    # Expression
+    #   : Literal
+    #   ;
+    def Expression(self):
+        return self.Literal()
+
     # Literal
     #   : NumericLiteral
     #   | StringLiteral
     #   ;
-    #
-    def Program(self):
-        return {
-            "type": "Program",
-            "body": self.Literal()
-        }
-    
     def Literal(self):
         if self._lookahead["type"] == "NUMBER":
             return self.NumericLiteral()
@@ -57,5 +91,6 @@ if __name__ == "__main__":
     multiline comment
     Yeah boi
     */
-    "yeah 42"
+    ";yeah 42";
+    32;
     """))
