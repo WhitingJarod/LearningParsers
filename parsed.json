@@ -1,1 +1,20 @@
-{"type": "Program", "body": [{"type": "ExpressionStatement", "expression": {"type": "StringValue", "value": ";yeah 42"}}, {"type": "ExpressionStatement", "expression": {"type": "NumericLiteral", "value": 32.0}}, {"type": "BlockStatement", "body": [{"type": "ExpressionStatement", "expression": {"type": "NumericLiteral", "value": 112.0}}, {"type": "BlockStatement", "body": [{"type": "ExpressionStatement", "expression": {"type": "StringValue", "value": "Another block deep!"}}]}]}]}
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "+=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "a"
+                },
+                "right": {
+                    "type": "NumericLiteral",
+                    "value": 1.0
+                }
+            }
+        }
+    ]
+}

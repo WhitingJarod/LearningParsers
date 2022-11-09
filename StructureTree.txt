@@ -1,0 +1,25 @@
+Program
+    StatementList
+        Statement
+            EmptyStatement
+            BlockStatement
+                StatementList
+                    etc
+            ExpressionStatement
+                AssignmentExpression
+                    Identifier
+                Expression
+                    AdditiveExpression
+                        MultiplicativeExpression
+                            PrimaryExpression
+                                Literal
+                                    NumericLiteral
+                                    StringLiteral
+                                ParenthesizedExpression
+                                    Expression
+                                        etc
+                            MultiplicativeExpression
+                                etc
+                        AdditiveExpression
+                            etc
+                            etc

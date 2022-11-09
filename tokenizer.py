@@ -9,6 +9,13 @@ Spec = [
     [re.compile("^;"), ";"],
     [re.compile("^\{"), "{"],
     [re.compile("^\}"), "}"],
+    [re.compile("^[\*\/\+\-]="), "COMPLEX_ASSIGN"],
+    [re.compile("^="), "SIMPLE_ASSIGN"],
+    [re.compile("^[\+\-]"), "ADDITIVE_OPERATOR"],
+    [re.compile("^[\*\/]"), "MULTIPLICATIVE_OPERATOR"],
+    [re.compile("^\("), "("],
+    [re.compile("^\)"), ")"],
+    [re.compile("^\w+"), "IDENTIFIER"],
 ]
 
 
