@@ -7,6 +7,8 @@ Spec = [
     [re.compile("^//.*\n"), None],
     [re.compile("/\*[\s\S]*\*/"), None],
     [re.compile("^;"), ";"],
+    [re.compile("^\{"), "{"],
+    [re.compile("^\}"), "}"],
 ]
 
 

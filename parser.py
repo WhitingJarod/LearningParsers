@@ -1,4 +1,5 @@
 from tokenizer import Tokenizer
+import json
 
 class Parser:
 
@@ -23,17 +24,44 @@ class Parser:
     #   : Statement
     #   | StatementList Statement -> Statement Statement Statement Statement
     #   ;
-    def StatementList(self):
+    def StatementList(self, stopLookahead = None):
         statementList = [self.Statement()]
-        while self._lookahead:
+        while self._lookahead and self._lookahead["type"] != stopLookahead:
             statementList.append(self.Statement())
         return statementList
     
     # Statement
     #   : ExpressionStatement
+    #   | BlockStatement
+    #   | EmptyStatement
     #   ;
     def Statement(self):
-        return self.ExpressionStatement()
+        if self._lookahead["type"] == "{":
+            return self.BlockStatement()
+        elif self._lookahead["type"] == ";":
+            return self.EmptyStatement()
+        else:
+            return self.ExpressionStatement()
+    
+    # EmptyStatement
+    # : ";"
+    # ;
+    def EmptyStatement(self):
+        self._eat(";")
+        return {
+            "type": "EmptyStatement"
+        }    
+    # BlockStatement
+    #   : "{" Optional StatementList "}"
+    #   ;
+    def BlockStatement(self):
+        self._eat("{")
+        body = self._lookahead["type"] != "}" and self.StatementList("}") or [];
+        self._eat("}")
+        return {
+            "type": "BlockStatement",
+            "body": body
+        }
     
     # ExpressionStatement
     #   : Expression ";"
@@ -85,12 +113,22 @@ class Parser:
         self._lookahead = self._tokenizer.getNextToken()
         return token
 
+
 if __name__ == "__main__":
-    print(Parser().parse("""
-    /* This is a
-    multiline comment
-    Yeah boi
-    */
-    ";yeah 42";
-    32;
-    """))
+    parsed = Parser().parse("""
+        /* This is a
+        multiline comment
+        Yeah boi
+        */
+        ";yeah 42";
+        32;
+        { // New block yeah!
+            112;
+            {
+                "Another block deep!";
+            }
+        }
+    """)
+    out = open("parsed.json", "w")
+    print(json.dump(parsed, out))
+    out.close()
